@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,7 +28,8 @@ public class ProductTests {
             """;
 
     @Test
-    void testCreateProduct() throws Exception {
+    @WithMockUser(username = "manager", roles = {"MANAGER"})
+    void testCreateProductAsManager() throws Exception {
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productJson))
@@ -35,8 +37,28 @@ public class ProductTests {
                 .andExpect(jsonPath("$.name").value("iPad"));
     }
 
+
     @Test
-    void testGetAllProducts() throws Exception {
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testCreateProductAsAdmin() throws Exception {
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productJson))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "customer", roles = {"CUSTOMER"})
+    void testCreateProductAsCustomer() throws Exception {
+        mockMvc.perform(post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(productJson))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "customer", roles = {"CUSTOMER"})
+    void testGetAllProductsAsCustomer() throws Exception {
         mockMvc.perform(get("/api/products")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -44,6 +66,24 @@ public class ProductTests {
     }
 
     @Test
+    @WithMockUser(username = "manager", roles = {"MANAGER"})
+    void testGetAllProductsAsManager() throws Exception {
+        mockMvc.perform(get("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testGetAllProductsAsAdmin() throws Exception {
+        mockMvc.perform(get("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "manager", roles = {"MANAGER"})
     void testEditProduct() throws Exception {
         String updatedProductJson = """
                 {
@@ -62,6 +102,7 @@ public class ProductTests {
     }
 
     @Test
+    @WithMockUser(username = "manager", roles = {"MANAGER"})
     void testDeleteProduct() throws Exception {
         mockMvc.perform(delete("/api/products/1")
                         .contentType(MediaType.APPLICATION_JSON))
