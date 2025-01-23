@@ -1,9 +1,11 @@
 package com.bookStore.controller;
 
+import com.bookStore.dto.ProductDto;
 import com.bookStore.entity.Product;
 import com.bookStore.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +18,34 @@ public class ProductController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
-    public List<Product> getAllProducts() {
+    public List<ProductDto> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/products")
+    @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
+    public String products(Model model) {
+        model.addAttribute("products", getAllProducts());
+        return "test";
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public Product getProductById(@PathVariable Integer id) {
+    public ProductDto getProductById(@PathVariable Integer id) {
         return productService.getProductById(id);
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public Product createProduct(@RequestBody Product product) {
-        return productService.saveProduct(product);
+    public ProductDto createProduct(@RequestBody ProductDto productDto) {
+        return productService.saveProduct(productDto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('MANAGER')")
-    public Product updateProduct(@PathVariable Integer id, @RequestBody Product product) {
-        product.setId(id);
-        return productService.saveProduct(product);
+    public ProductDto updateProduct(@PathVariable Integer id, @RequestBody ProductDto productDto) {
+        productDto.setId(id);
+        return productService.saveProduct(productDto);
     }
 
     @DeleteMapping("/{id}")

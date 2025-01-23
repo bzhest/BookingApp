@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+        }
+        th {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Product Table</h1>
+<table id="productsTable">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Author</th>
+        <th>Price</th>
+        <th>Actions</th>
+        <th>Booking Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Products will be added here dynamically -->
+    </tbody>
+</table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Fetch products from the backend
+        $.getJSON("/api/products", function(products) {
+    products.forEach(function(product) {
+    $('#productsTable tbody').append(
+        '<tr id="row-' + product.id + '">' +
+        '<td>' + product.name + '</td>' +
+        '<td>' + product.description + '</td>' +
+        '<td>' + product.author + '</td>' +
+        '<td>$' + product.price.toFixed(2) + '</td>' +
+        '<td id="action-' + product.id + '"><button onclick="bookProduct(' + product.id + ')">Book</button></td>' +
+        '<td id="status-' + product.id + '">Not booked</td>' +
+        '</tr>'
+                );
+            });
+        });
+    });
+
+    function bookProduct(productId) {
+        var bookingData = {
+            product_id: productId,
+            user_id: 3, // This should be dynamically fetched based on the logged-in user
+            deliveryAddress: "1234 Test Address", // This might come from a form field or user profile
+            booking_status: 1,
+            quantity: 1 // This could be selected by the user
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/api/bookings",
+            contentType: "application/json",
+            data: JSON.stringify(bookingData),
+            success: function(response) {
+                alert("Product booked successfully!");
+                // Assuming the response includes the booking ID and status ID
+                var bookingId = response.id;
+                var statusId = response.booking_status;
+                $('#row-' + productId).data('bookingId', bookingId); // Store the bookingId in the row for later access
+                fetchBookingStatus(productId, statusId);
+            },
+            error: function(response) {
+                alert("Error booking product");
+            }
+        });
+    }
+
+    function fetchBookingStatus(productId, statusId) {
+    var bookingId = $('#row-' + productId).data('bookingId');
+    console.log("Product ID:", productId, "Status ID:", statusId, "Booking ID:", bookingId);
+    //console.log("Fetching status for Product ID:", productId, "with Status ID:", statusId); // Debugging line
+    $.getJSON("/api/bookings/" + statusId + "/status", function(response) {
+    console.log("Received status:", response.status);  // Assuming response is { "status": "submitted" }
+    $('#status-' + productId).text(response.status);
+    if (response.status === "Submitted") {
+            let buttonHTML = '<button onclick="cancelBooking(' + bookingId + ', ' + productId + ')">Cancel Booking</button>';
+            $('#action-' + productId).html(buttonHTML);
+        }
+});
+}
+
+    function cancelBooking(bookingId, productId) {
+    var cancelStatus = {
+        name: "canceled",
+        id: 4 // booking status for "cancel"
+    };
+
+    $.ajax({
+        type: "PUT",
+        url: "/api/bookings/" + bookingId + "/status",
+        contentType: "application/json",
+        data: JSON.stringify(cancelStatus),
+        success: function() {
+            alert('Booking has been canceled successfully!');
+            $('#status-' + productId).text("Canceled");
+            var buttonHTML = '<button onclick="bookProduct(' + productId + ')">Book</button>';
+            $('#action-' + productId).html(buttonHTML);
+        },
+        error: function() {
+            alert("Failed to cancel the booking");
+        }
+    });
+    }
+</script>
+</body>
+</html>

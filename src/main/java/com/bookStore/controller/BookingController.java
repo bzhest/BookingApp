@@ -4,7 +4,9 @@ import com.bookStore.dto.BookingDto;
 import com.bookStore.entity.Booking;
 import com.bookStore.entity.BookingStatus;
 import com.bookStore.service.BookingService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,31 +21,32 @@ public class BookingController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
-    public Booking createBooking(@RequestBody BookingDto bookingDto) {
+    public BookingDto createBooking(@RequestBody BookingDto bookingDto) {
         return bookingService.createBooking(bookingDto);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
-    public List<Booking> getAllBookings() {
+    public List<BookingDto> getAllBookings() {
         return bookingService.getAllBookings();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
-    public Booking getBookingById(@PathVariable Integer id) {
+    public BookingDto getBookingById(@PathVariable Integer id) {
         return bookingService.getBookingById(id);
     }
 
-    @GetMapping("/{id}/status")
+    @GetMapping(value = "/{id}/status", produces = "application/json")
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
-    public String getBookingStatus(@PathVariable Integer id) {
-        return bookingService.getBookingStatus(id);
+    public ResponseEntity<?> getBookingStatus(@PathVariable Integer id) {
+        String status = bookingService.getBookingStatus(id);
+        return ResponseEntity.ok("{\"status\":\"" + StringUtils.capitalize(status) + "\"}");
     }
 
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
-    public Booking updateBookingStatus(@PathVariable Integer id, @RequestBody BookingStatus status) {
+    public BookingDto updateBookingStatus(@PathVariable Integer id, @RequestBody BookingStatus status) {
         return bookingService.updateBookingStatus(id, status);
     }
 

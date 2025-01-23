@@ -1,30 +1,47 @@
 package com.bookStore.service;
 
+import com.bookStore.converter.ProductEntityToProductDtoConverter;
+import com.bookStore.dto.ProductDto;
 import com.bookStore.entity.Product;
 import com.bookStore.repository.ProductRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
+@RequiredArgsConstructor
 @Service
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    private final ProductRepository productRepository;
+    private final ProductEntityToProductDtoConverter productEntityToProductDtoConverter;
+
+
+    public List<ProductDto> getAllProducts() {
+        List<Product> allProducts = productRepository.findAll();
+        return allProducts.stream().map(productEntityToProductDtoConverter::convert).toList();
     }
 
-    public Product getProductById(Integer id) {
-        return productRepository.findById(id).orElse(null);
+    public ProductDto getProductById(Integer id) {
+        Product product = productRepository.findById(id).orElse(null);
+        return productEntityToProductDtoConverter.convert(product);
     }
 
-    public Product saveProduct(Product product) {
-        return productRepository.save(product);
+    public ProductDto saveProduct(ProductDto productDto) {
+        Product product = new Product();
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        product.setAuthor(productDto.getAuthor());
+        product.setImagePath(productDto.getImagePath());
+        product.setPrice(productDto.getPrice());
+        Product savedProduct = productRepository.save(product);
+        return productEntityToProductDtoConverter.convert(savedProduct);
     }
 
     public void deleteProduct(Integer id) {
         productRepository.deleteById(id);
+        log.info("Booking with id '" + id + "'was deleted");
     }
 }
