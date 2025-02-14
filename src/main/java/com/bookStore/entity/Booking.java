@@ -29,6 +29,7 @@ public class Booking {
     private String deliveryAddress;
     private Date date;
     private Time time;
+    private float price;
 
     @ManyToOne
     @JoinColumn(name = "booking_status_id", referencedColumnName = "id")

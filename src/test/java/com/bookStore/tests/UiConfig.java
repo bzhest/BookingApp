@@ -12,9 +12,15 @@ public interface UiConfig extends Config {
     @Key("url")
     String getUrl();
 
-    @Key("username")
-    String getUserName();
+    @Key("usernameManager")
+    String getManagerUsername();
 
-    @Key("password")
-    String getPassword();
+    @Key("passwordManager")
+    String getManagerPassword();
+
+    @Key("usernameCustomer")
+    String getCustomerUsername();
+
+    @Key("passwordCustomer")
+    String getCustomerPassword();
 }

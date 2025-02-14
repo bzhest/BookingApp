@@ -3,6 +3,8 @@ package com.bookStore.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class BookingDto {
 
@@ -20,4 +22,10 @@ public class BookingDto {
     private Integer bookingStatusId;
 
     private Integer quantity;
+    private String bookingStatusName;
+    private String productTitle;
+    private Date date;
+    private String time;
+    private float price;
+
 }

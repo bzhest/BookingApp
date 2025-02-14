@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin: 10px;
+        }
+        .pagination {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/index.html">BookShop</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/catalogue.html">Catalogue <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/bookings.html">Bookings</a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </div>
+</nav>
+<div class="container">
+    <h1 class="mt-4">Catalog</h1>
+    <div class="row" id="productsContainer"></div>
+
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active">
+      <span class="page-link">
+        2
+        <span class="sr-only">(current)</span>
+      </span>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var itemsPerPage = 6;
+        $.getJSON("/api/products", function(products) {
+            var totalPages = Math.ceil(products.length / itemsPerPage);
+
+            function displayPage(pageNumber) {
+                var start = (pageNumber - 1) * itemsPerPage;
+                var end = start + itemsPerPage;
+                var pageItems = products.slice(start, end);
+
+                $('#productsContainer').empty();
+                pageItems.forEach(function(product) {
+                    $('#productsContainer').append(
+                        '<div class="col-md-4">' +
+                        '<div class="card">' +
+                        '<div class="card-body">' +
+                        '<h5 class="card-title">' + product.name + '</h5>' +
+                        '<p class="card-text">' + product.description + '</p>' +
+                        '<p class="card-text"><small class="text-muted">Author: ' + product.author + '</small></p>' +
+                        '<p class="card-text">$' + product.price.toFixed(2) + '</p>' +
+                        '<button class="btn btn-primary" onclick="bookProduct(' + product.id + ')">Book</button>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>'
+                    );
+                });
+            }
+
+            displayPage(1); // Initially display the first page
+
+            // Populate pagination
+            $('.pagination').empty();
+            for (let i = 1; i <= totalPages; i++) {
+                $('.pagination').append(
+                    '<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>'
+                );
+            }
+
+            $('.page-link').click(function(e) {
+                e.preventDefault();
+                var pageNumber = parseInt($(this).text());
+                displayPage(pageNumber);
+            });
+        });
+    });
+
+    function bookProduct(productId) {
+        var bookingData = {
+            product_id: productId,
+            user_id: 3, // This should be dynamically fetched based on the logged-in user
+            deliveryAddress: "1234 Test Address", // This might come from a form field or user profile
+            booking_status: 1,
+            quantity: 1 // This could be selected by the user
+        };
+
+        $.ajax({
+            type: "POST",
+            url: "/api/bookings",
+            contentType: "application/json",
+            data: JSON.stringify(bookingData),
+            success: function(response) {
+                alert("Product booked successfully!");
+                // Assuming the response includes the booking ID and status ID
+                var bookingId = response.id;
+                var statusId = response.booking_status;
+                $('#row-' + productId).data('bookingId', bookingId); // Store the bookingId in the row for later access
+                fetchBookingStatus(productId, statusId);
+            },
+            error: function(response) {
+                alert("Error booking product");
+            }
+        });
+    }
+
+    function fetchBookingStatus(productId, statusId) {
+    var bookingId = $('#row-' + productId).data('bookingId');
+    console.log("Product ID:", productId, "Status ID:", statusId, "Booking ID:", bookingId);
+    $.getJSON("/api/bookings/" + statusId + "/status", function(response) {
+    console.log("Received status:", response.status);  // Assuming response is { "status": "submitted" }
+    $('#status-' + productId).text(response.status);
+    if (response.status === "Submitted") {
+            let buttonHTML = '<button onclick="cancelBooking(' + bookingId + ', ' + productId + ')">Cancel Booking</button>';
+            $('#action-' + productId).html(buttonHTML);
+        }
+});
+}
+
+    function cancelBooking(bookingId, productId) {
+    var cancelStatus = {
+        name: "canceled",
+        id: 4 // booking status for "cancel"
+    };
+
+    $.ajax({
+        type: "PUT",
+        url: "/api/bookings/" + bookingId + "/status",
+        contentType: "application/json",
+        data: JSON.stringify(cancelStatus),
+        success: function() {
+            alert('Booking has been canceled successfully!');
+            $('#status-' + productId).text("Canceled");
+            var buttonHTML = '<button onclick="bookProduct(' + productId + ')">Book</button>';
+            $('#action-' + productId).html(buttonHTML);
+        },
+        error: function() {
+            alert("Failed to cancel the booking");
+        }
+    });
+    }
+
+    // Keep the function definitions for bookProduct, cancelBooking, and fetchBookingStatus as is
+</script>
+</body>
+</html>

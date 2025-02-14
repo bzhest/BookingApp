@@ -86,7 +86,6 @@
     function fetchBookingStatus(productId, statusId) {
     var bookingId = $('#row-' + productId).data('bookingId');
     console.log("Product ID:", productId, "Status ID:", statusId, "Booking ID:", bookingId);
-    //console.log("Fetching status for Product ID:", productId, "with Status ID:", statusId); // Debugging line
     $.getJSON("/api/bookings/" + statusId + "/status", function(response) {
     console.log("Received status:", response.status);  // Assuming response is { "status": "submitted" }
     $('#status-' + productId).text(response.status);

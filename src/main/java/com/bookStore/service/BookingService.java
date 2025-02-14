@@ -10,10 +10,12 @@ import com.bookStore.repository.BookingRepository;
 import com.bookStore.repository.BookingStatusRepository;
 import com.bookStore.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -44,6 +46,7 @@ public class BookingService {
         booking.setDate(Date.valueOf(LocalDate.now()));
         booking.setTime(Time.valueOf(LocalTime.now()));
         booking.setStatus(bookingStatusById);
+        booking.setPrice(productById.getPrice());
         booking.setQuantity(bookingDto.getQuantity());
         Booking savedBooking = bookingRepository.save(booking);
         return bookingEntityToBookingDtoConverter.convert(savedBooking);
@@ -77,8 +80,27 @@ public class BookingService {
         throw new RuntimeException("Booking with id '" + id + "' wasn't found");
     }
 
+    public BookingDto updateBooking(Integer id, BookingDto dto) {
+        Booking booking = bookingRepository.findById(id).orElse(null);
+        if (booking != null) {
+            booking.setDate(new java.sql.Date(dto.getDate().getTime()));
+            booking.setTime(timeConverter(dto.getTime()));
+            booking.setDeliveryAddress(dto.getDeliveryAddress());
+            bookingRepository.save(booking);
+            return bookingEntityToBookingDtoConverter.convert(booking);
+        }
+        throw new RuntimeException("Booking with id '" + id + "' wasn't found");
+    }
+
     public String deleteBooking(Integer id) {
         bookingRepository.deleteById(id);
         return "Booking with id '" + id + "' was deleted";
+    }
+
+    @SneakyThrows
+    public java.sql.Time timeConverter(String time){
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        java.util.Date parsedDate = format.parse(time);
+        return new Time(parsedDate.getTime());
     }
 }

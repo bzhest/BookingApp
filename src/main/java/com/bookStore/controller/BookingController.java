@@ -50,6 +50,12 @@ public class BookingController {
         return bookingService.updateBookingStatus(id, status);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public BookingDto updateBooking(@PathVariable Integer id, @RequestBody BookingDto bookingDto) {
+        return bookingService.updateBooking(id, bookingDto);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('MANAGER', 'CUSTOMER')")
     public void deleteBooking(@PathVariable Integer id) {

@@ -62,7 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").authenticated()
 
                         .anyRequest().authenticated()
-                ).formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
+                ).formLogin(formLogin -> formLogin.permitAll()
+                        .defaultSuccessUrl("/index.html", true))
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
