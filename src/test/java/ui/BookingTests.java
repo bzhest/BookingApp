@@ -1,7 +1,6 @@
 package ui;
 
 import com.codeborne.selenide.Selenide;
-import com.github.javafaker.Address;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import static com.codeborne.selenide.Selenide.open;
 import static ui.Constants.*;
 
-public class BookingTests extends BaseTest {
+public class BookingTests extends BaseTests {
 
     @Test
     public void checkProductCanBeBooked() {
