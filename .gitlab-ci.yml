@@ -40,8 +40,9 @@ build_job:
 
 db:
   stage: db
-  image: mysql:5.7
+  image: ruby:3.1
   before_script:
+      - apt-get update && apt-get install -y default-mysql-client
       - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD
   script:
       - mvn clean install -DskipTests
