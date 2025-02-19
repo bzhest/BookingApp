@@ -40,6 +40,7 @@ build_job:
 
 db:
   stage: db
+  image: mysql:5.7
   before_script:
       - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD
   script:
