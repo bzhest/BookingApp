@@ -52,8 +52,6 @@ db:
   variables:
       MYSQL_DATABASE: 'bookStore'
       MYSQL_ROOT_PASSWORD: 'admin'
-      MYSQL_USER: 'root'
-      MYSQL_PASSWORD: 'admin'
 
 deploy_job:
   stage: deploy
