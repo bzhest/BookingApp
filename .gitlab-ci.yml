@@ -51,7 +51,8 @@ db:
       MYSQL_ROOT_PASSWORD: 'admin'
   before_script:
     - apt-get update && apt-get install -y default-mysql-client
-    - sleep 5  # Wait for DNS to be available
+    - mysql --version
+    - sleep 30
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD
   script:
       - mvn clean install -DskipTests
