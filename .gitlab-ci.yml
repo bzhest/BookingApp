@@ -49,10 +49,10 @@ db:
       MYSQL_DATABASE: 'bookStore'
       MYSQL_ROOT_PASSWORD: 'admin'
   before_script:
-    - apt-get update && apt-get install -y default-mysql-client wget openjdk-11-jdk-headless
-    - wget -O maven.tar.gz "https://downloads.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz"
+    - apt-get update && apt-get install -y default-mysql-client wget openjdk-17-jdk-headless
+    - wget -O maven.tar.gz "https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz"
     - tar -xvzf maven.tar.gz -C /opt
-    - ln -s /opt/apache-maven-3.8.3/bin/mvn /usr/bin/mvn
+    - ln -s /opt/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
     - mvn --version
     - mysql --version
     - sleep 30
