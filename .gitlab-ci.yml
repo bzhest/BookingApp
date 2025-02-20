@@ -43,18 +43,20 @@ build_job:
 
 db:
   stage: db
-  before_script:
-      - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD
-  script:
-      - mvn clean install -DskipTests
-      - mvn spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:mysql://mysql:3306/bookStore?useSSL=false&serverTimezone=UTC --spring.datasource.username=root --spring.datasource.password=admin" &
-      - sleep 30  # Give time for the application to start
-      - mvn test
   services:
     - mysql:latest
   variables:
       MYSQL_DATABASE: 'bookStore'
       MYSQL_ROOT_PASSWORD: 'admin'
+  before_script:
+    - apt-get update
+    - apt-get -y install iputils-ping git curl mysql-client wget curl net-tools libjson-perl
+    - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD
+  script:
+      - mvn clean install -DskipTests
+      - mvn spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:mysql://mysql:3306/bookStore?useSSL=false&serverTimezone=UTC --spring.datasource.username=root --spring.datasource.password=admin" &
+      - sleep 30  # Give time for the application to start
+      - mvn test
 
 deploy_job:
   stage: deploy
