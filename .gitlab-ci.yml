@@ -4,12 +4,12 @@ variables:
   MYSQL_ROOT_PASSWORD: 'admin'
 
 stages:
+  - build
   - checkstyle
   - test_coverage_check
-  - build
   - db
   - deploy_job
-  - unit_tests
+  - tests
   - e2e_test
 
 
@@ -75,7 +75,7 @@ deploy_job:
     - build_job
 
 unit_tests:
-  stage: unit_tests
+  stage: tests
   script:
     - echo "Running unit tests..."
     - mvn clean -Dtest=com.bookStore.tests.*Tests test
