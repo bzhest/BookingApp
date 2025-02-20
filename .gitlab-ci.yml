@@ -43,6 +43,7 @@ build_job:
 
 db:
   stage: db
+  image: alpine:latest
   services:
     - name: mysql:5.7
       alias: mysql
@@ -52,10 +53,12 @@ db:
   before_script:
     - apt-get update && apt-get install -y default-mysql-client
     - mysql --version
+    - echo "${MYSQL_ROOT_PASSWORD}"
+    - echo "${MYSQL_DATABASE}"
     - sleep 30
     - echo "Checking MySQL service connectivity..."
     - until mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD -e ";" ; do echo "Waiting for MySQL..." && sleep 5; done
-    - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql --host=mysql --user=root --password=$MYSQL_ROOT_PASSWORD
+    - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -h 127.0.0.1 "${MYSQL_DATABASE}"
   script:
       - mvn clean install -DskipTests
       - mvn spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:mysql://mysql:3306/bookStore?useSSL=false&serverTimezone=UTC --spring.datasource.username=root --spring.datasource.password=admin" &
