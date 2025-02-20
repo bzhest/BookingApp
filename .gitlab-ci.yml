@@ -5,12 +5,6 @@ variables:
   MYSQL_USER: 'root'
   MYSQL_PASSWORD: 'admin'
 
-connect:
-  image: mysql
-  script:
-    - echo "SELECT 'OK';" | mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-
-
 stages:
   - checkstyle
   - test_coverage_check
