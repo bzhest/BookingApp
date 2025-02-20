@@ -54,7 +54,7 @@ db:
     - mysql --version
     - sleep 30
     - echo "Checking MySQL service connectivity..."
-    - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root p"$MYSQL_ROOT_PASSWORD" --host=mysql "${MYSQL_DATABASE}"
+    - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
   script:
       - mvn clean install -DskipTests
       - mvn spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:mysql://mysql:3306/bookStore?useSSL=false&serverTimezone=UTC --spring.datasource.username=root --spring.datasource.password=admin" &
