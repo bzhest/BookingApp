@@ -8,7 +8,7 @@ stages:
   - test_coverage_check
   - build
   - db
-  - deploy
+  - deploy_job
   - unit_tests
   - e2e_test
 
@@ -62,10 +62,9 @@ db:
       - mvn clean install -DskipTests
       - mvn spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:mysql://mysql:3306/bookStore?useSSL=false&serverTimezone=UTC --spring.datasource.username=root --spring.datasource.password=admin" &
       - sleep 30  # Give time for the application to start
-      - mvn test
 
 deploy_job:
-  stage: deploy
+  stage: deploy_job
   script:
     - echo "Deploying the application..."
     - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
@@ -85,8 +84,10 @@ unit_tests:
 
 e2e_test:
   stage: e2e_test
+  services:
+    - selenium/standalone-chrome
   script:
     - echo "Building the project..."
-    - mvn clean -Dtest=ui.*Tests test
+    - mvn clean -Dtest=ui.*Tests Dheadless=true test
   only:
     - development
