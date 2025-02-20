@@ -43,7 +43,6 @@ build_job:
 
 db:
   stage: db
-  image: alpine:latest
   services:
     - name: mysql:5.7
       alias: mysql
