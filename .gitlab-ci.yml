@@ -50,10 +50,12 @@ db:
       MYSQL_ROOT_PASSWORD: 'admin'
   before_script:
     - apt-get update && apt-get install -y default-mysql-client wget openjdk-11-jdk-headless
-    - wget -qO- https://downloads.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz | tar xvz -C /opt
+    - wget -O maven.tar.gz "https://downloads.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz"
+    - tar -xvzf maven.tar.gz -C /opt
     - ln -s /opt/apache-maven-3.8.3/bin/mvn /usr/bin/mvn
     - mvn --version
     - mysql --version
+    - sleep 30
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
   script:
