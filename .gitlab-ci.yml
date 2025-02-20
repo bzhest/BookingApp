@@ -19,7 +19,7 @@ checkstyle:
   script:
     - mvn checkstyle:check
   only:
-    - development
+    - ci
 
 test_coverage_check:
   stage: test_coverage_check
@@ -27,7 +27,7 @@ test_coverage_check:
     - echo "Checking test coverage..."
     - mvn jacoco:report
   only:
-    - development
+    - ci
 
 build_job:
   stage: build
@@ -80,7 +80,7 @@ unit_tests:
     - echo "Running unit tests..."
     - mvn clean -Dtest=com.bookStore.tests.*Tests test
   only:
-    - development
+    - ci
 
 e2e_test:
   stage: e2e_test
@@ -90,4 +90,4 @@ e2e_test:
     - echo "Building the project..."
     - mvn clean -Dtest=ui.*Tests Dheadless=true test
   only:
-    - development
+    - ci
