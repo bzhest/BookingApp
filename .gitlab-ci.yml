@@ -100,9 +100,9 @@ unit_tests:
     - sleep 30
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
-  script:
     - echo "Deploying the application..."
     - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
+  script:
     - echo "Running unit tests..."
     - mvn clean -Dtest=com.bookStore.tests.*Tests test
   artifacts:
