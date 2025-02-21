@@ -14,6 +14,17 @@ stages:
 
 
 #############################################################JOBS#######################################################
+
+build_job:
+  stage: build
+  image: maven:3.8.3-openjdk-17
+  script:
+    - echo "Building the application..."
+    - mvn clean package -DskipTests # Example for a Maven Java project
+  artifacts:
+    paths:
+      - target/*.jar
+
 checkstyle:
   stage: checkstyle
   script:
@@ -28,16 +39,6 @@ test_coverage_check:
     - mvn jacoco:report
   only:
     - ci
-
-build_job:
-  stage: build
-  image: maven:3.8.3-openjdk-17
-  script:
-    - echo "Building the application..."
-    - mvn clean package -DskipTests # Example for a Maven Java project
-  artifacts:
-    paths:
-      - target/*.jar
 
 db:
   stage: db
