@@ -83,7 +83,23 @@ deploy_job:
 
 unit_tests:
   stage: tests
-  image: maven:3.8.3-openjdk-17
+  image: ubuntu:20.04
+  services:
+    - name: mysql:5.7
+      alias: mysql
+  variables:
+    MYSQL_DATABASE: 'bookStore'
+    MYSQL_ROOT_PASSWORD: 'admin'
+  before_script:
+    - apt-get update && apt-get install -y default-mysql-client wget openjdk-17-jdk-headless
+    - wget -O maven.tar.gz "https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz"
+    - tar -xvzf maven.tar.gz -C /opt
+    - ln -s /opt/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
+    - mvn --version
+    - mysql --version
+    - sleep 30
+    - echo "Checking MySQL service connectivity..."
+    - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
   script:
     - echo "Deploying the application..."
     - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
