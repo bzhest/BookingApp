@@ -85,8 +85,13 @@ unit_tests:
   stage: tests
   image: maven:3.8.3-openjdk-17
   script:
+    - echo "Deploying the application..."
+    - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
     - echo "Running unit tests..."
     - mvn clean -Dtest=com.bookStore.tests.*Tests test
+  artifacts:
+    paths:
+      - target/*.jar
   dependencies:
     - build_job
   only:
