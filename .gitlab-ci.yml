@@ -97,7 +97,9 @@ unit_tests:
     - ln -s /opt/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
     - mvn --version
     - mysql --version
-    - sleep 30
+    - while ! mysqladmin ping -h"mysql" --silent; do
+        sleep 1;
+      done
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
     - echo "Deploying the application..."
