@@ -85,7 +85,7 @@ unit_tests:
   stage: tests
   image: ubuntu:20.04
   services:
-    - name: mysql:5.7
+    - name: mysql:8.0.33
       alias: mysql
   variables:
     MYSQL_DATABASE: 'bookStore'
