@@ -151,7 +151,7 @@ e2e_test:
     - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
   script:
     - echo "Running unit tests..."
-    - mvn clean -Dtest=ui.*Tests Dheadless=true test
+    - mvn clean -Dtest=ui.*Tests test
   artifacts:
     paths:
       - target/*.jar
