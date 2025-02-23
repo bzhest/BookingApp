@@ -98,7 +98,6 @@ unit_tests:
     - mvn --version
     - mysql --version
     - sleep 20
-    - service mysql status
     - echo "Database host is '${MYSQL_HOST}'"
     - echo "Database password is '${MYSQL_ROOT_PASSWORD}'"
     - while ! mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE" --silent; do
