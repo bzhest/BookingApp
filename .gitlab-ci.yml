@@ -102,7 +102,7 @@ unit_tests:
     - echo "Database password is '${MYSQL_ROOT_PASSWORD}'"
     - echo "Database name is " mysql
     - echo "SHOW tables;"| mysql -u root -p"$MYSQL_ROOT_PASSWORD" -h mysql "$MYSQL_DATABASE"
-    - lsof -i :3306 a
+    - sudo service mysql status
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
     - echo "Deploying the application..."
