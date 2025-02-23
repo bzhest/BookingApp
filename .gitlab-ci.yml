@@ -100,9 +100,9 @@ unit_tests:
     - sleep 20
     - echo "Database host is '${MYSQL_HOST}'"
     - echo "Database password is '${MYSQL_ROOT_PASSWORD}'"
-    - echo "Database name is '${MYSQL_DATABASE}'"
-    - echo "SHOW tables;"| mysql -u root -p"$MYSQL_ROOT_PASSWORD" --host=mysql "$MYSQL_DATABASE"
-    - echo "MySQL is up and running!"
+    - echo "Database name is " mysql
+    - echo "SHOW tables;"| mysql -u root -p"$MYSQL_ROOT_PASSWORD" -h mysql "$MYSQL_DATABASE"
+    - lsof -i :3306 a
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
     - echo "Deploying the application..."
