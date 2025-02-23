@@ -85,7 +85,7 @@ unit_tests:
   stage: tests
   image: ubuntu:20.04
   services:
-    - name: mysql:5.7
+    - name: mysql:8.0.33
       alias: mysql
   variables:
     MYSQL_DATABASE: 'bookStore'
@@ -97,13 +97,20 @@ unit_tests:
     - ln -s /opt/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
     - mvn --version
     - mysql --version
-    - sleep 30
+    - sleep 20
+    - echo "Database host is '${MYSQL_HOST}'"
+    - echo "Database password is '${MYSQL_ROOT_PASSWORD}'"
+    - while ! mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD" --host=mysql --silent; do
+        echo "Waiting for MySQL...";
+        sleep 1;
+      done
+    #- echo "SHOW tables;"| mysql -u root -p"$MYSQL_ROOT_PASSWORD" -h mysql "$MYSQL_DATABASE"
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
-    - sleep 30
-  script:
     - echo "Deploying the application..."
+    - sleep 30
     - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
+  script:
     - echo "Running unit tests..."
     - mvn clean -Dtest=com.bookStore.tests.*Tests test
   artifacts:
