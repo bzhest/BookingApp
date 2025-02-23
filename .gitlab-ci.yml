@@ -20,7 +20,7 @@ build_job:
   image: maven:3.8.3-openjdk-17
   script:
     - echo "Building the application..."
-    - mvn clean package -DskipTests # Example for a Maven Java project
+    - mvn clean Dspring-boot.run.profiles=ci package -DskipTests # Example for a Maven Java project
   artifacts:
     paths:
       - target/*.jar
@@ -46,7 +46,7 @@ test_coverage_check:
   only:
     - ci
 
-db:
+db connect:
   stage: db
   image: ubuntu:20.04
   services:
@@ -67,7 +67,7 @@ db:
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
   script:
       - mvn clean install -DskipTests
-      - mvn spring-boot:run -Dspring-boot.run.arguments="--spring.datasource.url=jdbc:mysql://mysql:3306/bookStore?useSSL=false&serverTimezone=UTC --spring.datasource.username=root --spring.datasource.password=admin" &
+      - mvn spring-boot:run Dspring-boot.run.profiles=ci -Dspring-boot.run.arguments="--spring.datasource.username=root --spring.datasource.password=admin" &
       - sleep 30  # Give time for the application to start
 
 deploy_job:
@@ -113,7 +113,7 @@ unit_tests:
     - java -jar target/bookStore-0.0.1-SNAPSHOT.jar & # Example for running a Java application
   script:
     - echo "Running unit tests..."
-    - mvn clean -Dtest=com.bookStore.tests.*Tests test
+    - mvn clean Dspring-boot.run.profiles=ci -Dtest=com.bookStore.tests.*Tests test
   artifacts:
     paths:
       - target/*.jar
