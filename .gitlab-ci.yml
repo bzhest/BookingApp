@@ -20,7 +20,7 @@ build_job:
   image: maven:3.8.3-openjdk-17
   script:
     - echo "Building the application..."
-    - mvn clean Dspring-boot.run.profiles=ci package -DskipTests # Example for a Maven Java project
+    - mvn clean Dspring-boot.run.profiles=application-ci package -DskipTests # Example for a Maven Java project
   artifacts:
     paths:
       - target/*.jar
