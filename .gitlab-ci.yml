@@ -91,18 +91,18 @@ unit_tests:
     MYSQL_DATABASE: 'bookStore'
     MYSQL_ROOT_PASSWORD: 'admin'
   before_script:
-    - apt-get update && apt-get install -y default-mysql-client wget openjdk-17-jdk-headless
+    - apt-get update && apt-get install -y default-mysql-client mysql-server wget openjdk-17-jdk-headless
     - wget -O maven.tar.gz "https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz"
     - tar -xvzf maven.tar.gz -C /opt
     - ln -s /opt/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
     - mvn --version
     - mysql --version
     - sleep 20
+    - service mysql status
     - echo "Database host is '${MYSQL_HOST}'"
     - echo "Database password is '${MYSQL_ROOT_PASSWORD}'"
     - echo "Database name is " mysql
     - echo "SHOW tables;"| mysql -u root -p"$MYSQL_ROOT_PASSWORD" -h mysql "$MYSQL_DATABASE"
-    - service mysql status
     - echo "Checking MySQL service connectivity..."
     - echo "CREATE DATABASE IF NOT EXISTS bookStore; USE bookStore; CREATE TABLE IF NOT EXISTS books (id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255) NOT NULL);" | mysql -u root -p"${MYSQL_ROOT_PASSWORD}" --host=mysql "${MYSQL_DATABASE}"
     - echo "Deploying the application..."
