@@ -12,10 +12,10 @@ public class BookingTests extends BaseTests {
 
     @Test
     public void checkProductCanBeBooked() {
-        open(uiConfig.getUrl() + LOGIN_PAGE);
+        open(LOGIN_PAGE);
         app.getLoginPage().login(uiConfig.getManagerUsername(), uiConfig.getManagerPassword());
         String product = "IpadNew3";
-        open(uiConfig.getUrl() + DASHBOARD_PAGE);
+        open(DASHBOARD_PAGE);
         Assert.assertEquals(app.getProductPage().getProductButtonText(product), "Book");
         Assert.assertEquals(app.getProductPage().getProductStatusText(product), "Not booked");
         app.getProductPage().clickProductButton(product);
@@ -26,10 +26,10 @@ public class BookingTests extends BaseTests {
 
     @Test
     public void checkProductCanBeCanceled() {
-        open(uiConfig.getUrl() + LOGIN_PAGE);
+        open(LOGIN_PAGE);
         app.getLoginPage().login(uiConfig.getManagerUsername(), uiConfig.getManagerPassword());
         String product = "IpadNew3";
-        open(uiConfig.getUrl() + DASHBOARD_PAGE);
+        open(DASHBOARD_PAGE);
         Assert.assertEquals(app.getProductPage().getProductButtonText(product), "Book");
         Assert.assertEquals(app.getProductPage().getProductStatusText(product), "Not booked");
         app.getProductPage().clickProductButton(product);
@@ -46,11 +46,11 @@ public class BookingTests extends BaseTests {
 
     @Test
     public void checkCustomerCanEditBooking() {
-        open(uiConfig.getUrl() + LOGIN_PAGE);
+        open(LOGIN_PAGE);
         app.getLoginPage().login(uiConfig.getCustomerUsername(), uiConfig.getCustomerPassword());
         String product = "iPad11";
         String newAddress = faker.address().streetAddress();
-        open(uiConfig.getUrl() + BOOKINGS_PAGE);
+        open(BOOKINGS_PAGE);
         app.getBookingPage().clickEdit(product);
         app.getEditBookingModal().fillAddressField(newAddress);
         app.getEditBookingModal().clickSaveChangesButton();

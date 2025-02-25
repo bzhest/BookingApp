@@ -16,8 +16,8 @@ public class BaseTests {
 
     @BeforeAll
     public static void before(){
-        Configuration.remote = "http://chrome/wd/hub";
+        Configuration.remote = "http://172.17.0.5:4444/wd/hub";
         Configuration.browser = "chrome";
-        Configuration.baseUrl = "http://chrome:8080";
+        Configuration.baseUrl = "http://172.17.0.5";
     }
 }
