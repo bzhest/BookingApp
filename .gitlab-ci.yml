@@ -124,7 +124,8 @@ e2e_test:
   stage: e2e_test
   image: ubuntu:20.04
   services:
-    - selenium/standalone-chrome
+    - name: selenium/standalone-chrome
+      alias: chrome
     - name: mysql:8.0.33
       alias: mysql
   variables:
