@@ -18,5 +18,6 @@ public class BaseTests {
     public static void before(){
         Configuration.remote = "http://chrome/wd/hub";
         Configuration.browser = "chrome";
+        Configuration.baseUrl = "http://chrome:8080";
     }
 }
